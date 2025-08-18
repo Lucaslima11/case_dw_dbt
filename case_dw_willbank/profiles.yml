@@ -1,0 +1,7 @@
+case_dw_willbank:
+  outputs:
+    dev:
+      type: duckdb
+      path: 'target/db_transaction.duckdb'
+      threads: 4
+  target: dev

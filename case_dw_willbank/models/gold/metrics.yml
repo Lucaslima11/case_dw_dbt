@@ -1,0 +1,152 @@
+semantic_models:
+  - name: transactions
+    description: |
+      Modelo semântico das transações no Core Account.
+      Representa cada transação realizada. Cada transação está associada a um customer.
+    defaults:
+      agg_time_dimension: transaction_date
+    model: ref('tb_fact_core_transaction')
+
+    entities:
+      - name: transaction
+        type: primary
+        expr: id_transaction
+      - name: cd_customer
+        type: foreign
+        expr: cd_customer_id
+    
+    dimensions:
+    - name: transaction_date
+      type: time
+      type_params:
+        time_granularity: day
+      expr: dt_transaction
+    - name: month_transaction_date
+      type: time
+      type_params:
+        time_granularity: month
+      expr: dt_month
+    - name: transaction_type
+      type: categorical
+      expr: ds_transaction_type
+
+    measures:
+      - name: total_amount
+        description: Valor total das transações.
+        agg: sum
+        expr: vl_transaction
+        create_metric: True
+      - name: count_transaction
+        description: Quantidade de transações realizadas.
+        agg: count
+        expr: id_transaction
+        create_metric: True
+      - name: count_pix_transaction_core
+        description: Quantidade de transações Pix realizadas no Core.
+        agg: sum
+        expr: CASE WHEN ds_transaction_type = 'PIX' then 1 else 0 end
+        create_metric: True
+      - name: distinct_customers
+        description: Contagem distinta de clientes.
+        agg: count_distinct
+        expr: cd_account_customer
+        create_metric: True
+      - name: avg_amount
+        description: Média de valores das transações.
+        agg: average
+        expr: vl_transaction
+        create_metric: True
+      - name: total_pix_amount_core
+        description: Total de transações PIX no Core Account.
+        agg: sum
+        expr: CASE WHEN ds_transaction_type = 'PIX' then vl_transaction else 0 end
+        create_metric: True
+  
+  - name: transactions_pix
+    description: |
+      Modelo semântico das transações no Core Pix.
+      Representa cada transação realizada. Cada transação está associada a um customer.
+    defaults:
+      agg_time_dimension: transaction_date
+    model: ref('tb_fact_pix_transaction')
+
+    entities:
+      - name: transaction_pix
+        type: primary
+        expr: id_transaction
+      - name: cd_customer_pix
+        type: foreign
+        expr: cd_customer_id
+    
+    dimensions:
+    - name: transaction_date
+      type: time
+      type_params:
+        time_granularity: day
+      expr: dt_transaction
+    - name: month_transaction_date
+      type: time
+      type_params:
+        time_granularity: month
+      expr: dt_month
+    - name: transaction_type
+      type: categorical
+      expr: ds_transaction_type
+    
+    measures:
+      - name: total_amount_pix
+        description: Valor total das transações no Core Pix.
+        agg: sum
+        expr: vl_transaction
+        create_metric: True
+      - name: count_transaction_pix
+        description: Quantidade de transações realizadas no Core Pix.
+        agg: count
+        expr: id_transaction
+        create_metric: True
+      - name: distinct_customers_pix
+        description: Contagem distinta de clientes com transação no Pix.
+        agg: count_distinct
+        expr: cd_account_customer
+        create_metric: True
+      - name: avg_amount_pix
+        description: Média de valores das transações no Core Pix.
+        agg: average
+        expr: vl_transaction
+        create_metric: True
+  
+  - name: customer_info
+    description: Representação de informação do cliente.
+    model: ref('tb_dim_customer_info')
+
+    entities:
+      - name: cd_customer
+        type: primary
+        expr: cd_customer_id
+    
+    dimensions:
+      - name: uf
+        type: categorical
+
+metrics:
+  - name: pix_amount_rate
+    description: Percentual de transações PIX no Core Account em valor.
+    type: ratio
+    type_params:
+      numerator: total_pix_amount_core
+      denominator: total_amount
+    label: '% Valor Pix (Core)/Valor total'
+  - name: pix_num_transaction_rate
+    description: Percentual de transações PIX no Core Account em quantidade.
+    type: ratio
+    type_params:
+      numerator: count_pix_transaction_core
+      denominator: count_transaction
+    label: '% Qtd Pix (Core)/Qtd total'
+  - name: ratio_availability_core_pix
+    description: Taxa de disponibilidade entre o Core Account e Core Pix.
+    type: ratio
+    type_params:
+      numerator: count_transaction_pix
+      denominator: count_transaction
+    label: 'Taxa Disponibilidade Pix/Core'

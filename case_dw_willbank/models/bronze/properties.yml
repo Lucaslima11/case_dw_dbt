@@ -1,0 +1,118 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    config:
+      tags: ['bronze', 'transaction', 'core']
+    tables:
+      - name: tb_core_account
+        description: Tabela com a informação de requisição de transferência e sensibilização do saldo em conta.
+        columns:
+          - name: id_transaction
+            description: identificador único da transação
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+
+          - name: dt_transaction
+            description: data de movimentação
+            data_tests:
+              - not_null
+
+          - name: dt_month
+            description: mês-ano da movimentação
+
+          - name: cd_account_customer
+            description: número da conta do cliente
+            constraints:
+              - type: foreign_key
+                to: source('raw', 'tb_customer')
+            data_tests:
+              - not_null
+          
+          - name: cd_seqlan
+            description: código sequencial de transações
+
+          - name: ds_transaction_type
+            description: tipo da transação
+
+          - name: vl_transaction
+            description: valor da transação
+
+          - name: updated_at
+            description: data de atualização da carga
+  
+      - name: tb_core_pix
+        description: Tabela com a informação de registro da transação de PIX.
+        config:
+          tags: ['bronze', 'transaction', 'pix']
+        columns:
+          - name: id_transaction
+            description: identificador único da transação
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+
+          - name: dt_transaction
+            description: data de movimentação
+            data_tests:
+              - not_null
+
+          - name: dt_month
+            description: mês-ano da movimentação
+          
+          - name: cd_seqlan
+            description: código sequencial de transações
+
+          - name: ds_transaction_type
+            description: tipo da transação
+
+          - name: vl_transaction
+            description: valor da transação
+            data_tests:
+              - not_null
+          
+          - name: updated_at
+            description: data de atualização da carga
+  
+      - name: tb_customer
+        description: Tabela com as informações de cliente.
+        config:
+          tags: ['bronze', 'customer', 'pii']
+        columns:
+          - name: cd_account_customer
+            description: número da conta do cliente
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+          
+          - name: entry_date
+            description: data de abertura da conta
+            data_tests:
+              - not_null
+
+          - name: full_name
+            description: nome completo
+
+          - name: birth_date
+            description: data de nascimento
+
+          - name: uf_name
+            description: estado de residência
+          
+          - name: uf
+            description: sigla do estado de residência
+
+          - name: street_name
+            description: logradouro
+          
+          - name: updated_at
+            description: data de atualização da carga
+
+

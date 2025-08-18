@@ -1,0 +1,157 @@
+version: 2
+
+models:
+  - name: tb_dim_customer_account
+    description: tabela de dimensão das informações da conta do cliente
+    config:
+      tags: ['dimension', 'silver', 'customer']
+    columns:
+          - name: cd_customer_id
+            description: código hash do cliente
+            data_tests:
+              - not_null
+          - name: cd_account_customer
+            description: número da conta do cliente
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+          - name: entry_date
+            description: data de abertura da conta
+            data_tests:
+              - not_null
+    
+  - name: tb_dim_customer_info
+    description: tabela de dimensão com as informações de cadastrais do cliente
+    config:
+      tags: ['dimension', 'silver', 'customer', 'pii']
+    columns:
+          - name: cd_customer_id
+            description: código hash do cliente
+            data_tests:
+              - not_null
+          - name: cd_account_customer
+            description: número da conta do cliente
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+          
+          - name: full_name
+            description: nome completo
+            config:
+              meta:
+                contains_pii: true
+
+          - name: birth_date
+            description: data de nascimento
+
+          - name: uf_name
+            description: estado de residência
+          
+          - name: uf
+            description: sigla do estado de residência
+
+          - name: street_name
+            description: logradouro
+            config:
+              meta:
+                contains_pii: true
+
+  - name: tb_fact_core_transaction
+    description: tabela fato com as transações do serviço Core Account
+    config:
+      tags: ['fact', 'silver', 'transaction', 'core']
+    columns:
+          - name: id_transaction
+            description: identificador único da transação
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+
+          - name: dt_transaction
+            description: data de movimentação
+            data_tests:
+              - not_null
+
+          - name: dt_month
+            description: mês-ano da movimentação
+
+          - name: cd_customer_id
+            description: código hash do cliente
+            data_tests:
+              - not_null
+
+          - name: cd_account_customer
+            description: número da conta do cliente
+            constraints:
+              - type: foreign_key
+                to: ref('tb_dim_customer_account')
+            data_tests:
+              - not_null
+          
+          - name: cd_seqlan
+            description: código sequencial de transações
+
+          - name: ds_transaction_type
+            description: tipo da transação
+            data_tests:
+              - not_null
+
+          - name: vl_transaction
+            description: valor da transação
+            
+  - name: tb_fact_pix_transaction
+    description: tabela fato com as transações do serviço Core Pix
+    config:
+      tags: ['fact', 'silver', 'transaction', 'pix']
+    columns:
+          - name: id_transaction
+            description: identificador único da transação
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+
+          - name: dt_transaction
+            description: data de movimentação
+            data_tests:
+              - not_null
+
+          - name: dt_month
+            description: mês-ano da movimentação
+          
+          - name: cd_seqlan
+            description: código sequencial de transações
+
+          - name: ds_transaction_type
+            description: tipo da transação
+            data_tests:
+              - not_null
+
+          - name: vl_transaction
+            description: valor da transação
+            data_tests:
+              - not_null
+  
+  - name: rel_core_account_pix
+    description: Tabela com a relação entre as transações Core Account e Core Pix
+    config:
+      tags: ['relation', 'silver', 'transaction', 'pix', 'core']
+    columns:
+          - name: id_transaction
+            description: identificador único da transação da tabela Core Account
+            constraints:
+              - type: primary_key
+            data_tests:
+              - not_null
+              - unique
+          
+          - name: is_pix_done
+            description: flag indicando se a transação foi realizada (0 ou 1)
+            data_type: integer
+            

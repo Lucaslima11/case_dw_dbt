@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: vw_error_pix_transaction
+    description: view com os erros de transação entre Core Account e Pix.
+    config:
+      tags: ['gold', 'transaction', 'report']
+    columns:
+          - name: id_transaction
+            description: identificador único da transação
+
+          - name: cd_customer_id
+            description: código hash do cliente
+
+          - name: dt_transaction
+            description: data de movimentação
+
+          - name: vl_transaction
+            description: valor da transação
+
+  - name: vw_daily_pix_transaction
+    description: view com as transações realizadas no Core Pix.
+    config:
+      tags: ['gold', 'transaction', 'pix', 'cube']
+    columns:
+          - name: uf
+            description: sigla do estado de residência
+
+          - name: dt_transaction
+            description: data de movimentação
+
+          - name: ds_transaction_type
+            description: tipo da transação
+
+          - name: num_transaction
+            description: contagem de transações realizadas
+          
+          - name: num_distinct_customer
+            description: contagem distinta de clientes
+          
+          - name: sum_vl_transaction
+            description: soma de valores das transações realizadas
+
+  - name: vw_daily_transaction
+    description: view com as transações realizadas no Core Account.
+    config:
+      tags: ['gold', 'transaction', 'core', 'cube']
+    columns:
+          - name: uf
+            description: sigla do estado de residência
+
+          - name: dt_transaction
+            description: data de movimentação
+
+          - name: ds_transaction_type
+            description: tipo da transação
+
+          - name: num_transaction
+            description: contagem de transações realizadas
+          
+          - name: num_distinct_customer
+            description: contagem distinta de clientes
+          
+          - name: sum_vl_transaction
+            description: soma de valores das transações realizadas
