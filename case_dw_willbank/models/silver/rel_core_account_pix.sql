@@ -1,10 +1,10 @@
 with pix as (
-    select
+    select distinct
         id_transaction
     from {{ ref('core_pix') }}
 ),
 core as (
-    select
+    select distinct
         id_transaction
     from {{ ref('core_account') }}
     

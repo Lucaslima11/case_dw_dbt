@@ -38,7 +38,7 @@ semantic_models:
         create_metric: True
       - name: count_transaction
         description: Quantidade de transações realizadas.
-        agg: count
+        agg: count_distinct
         expr: id_transaction
         create_metric: True
       - name: count_pix_transaction_core
@@ -101,7 +101,7 @@ semantic_models:
         create_metric: True
       - name: count_transaction_pix
         description: Quantidade de transações realizadas no Core Pix.
-        agg: count
+        agg: count_distinct
         expr: id_transaction
         create_metric: True
       - name: distinct_customers_pix

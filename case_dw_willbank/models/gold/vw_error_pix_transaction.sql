@@ -19,10 +19,10 @@ pix_transaction as (
 )
 
 select
-    ct.id_transaction,
+    pt.id_transaction,
     ct.cd_customer_id,
     ct.dt_transaction,
     ct.vl_transaction
-from core_transaction as ct
-left join pix_transaction as pt
+from pix_transaction as pt
+left join core_transaction as ct
     on ct.id_transaction = pt.id_transaction
