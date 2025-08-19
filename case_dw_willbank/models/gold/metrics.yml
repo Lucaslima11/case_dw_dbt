@@ -38,7 +38,7 @@ semantic_models:
         create_metric: True
       - name: count_transaction
         description: Quantidade de transações realizadas.
-        agg: count_distinct
+        agg: count
         expr: id_transaction
         create_metric: True
       - name: count_pix_transaction_core
@@ -74,9 +74,6 @@ semantic_models:
       - name: transaction_pix
         type: primary
         expr: id_transaction
-      - name: cd_customer_pix
-        type: foreign
-        expr: cd_customer_id
     
     dimensions:
     - name: transaction_date
@@ -102,12 +99,7 @@ semantic_models:
       - name: count_transaction_pix
         description: Quantidade de transações realizadas no Core Pix.
         agg: count_distinct
-        expr: id_transaction
-        create_metric: True
-      - name: distinct_customers_pix
-        description: Contagem distinta de clientes com transação no Pix.
-        agg: count_distinct
-        expr: cd_account_customer
+        expr: id_transaction || cd_seqlan || dt_transaction
         create_metric: True
       - name: avg_amount_pix
         description: Média de valores das transações no Core Pix.

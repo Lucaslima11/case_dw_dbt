@@ -3,7 +3,7 @@ with core_account as (
     from {{ ref('tb_core_account') }} 
 )
 
-select
+select distinct
     id_transaction,
     dt_transaction,
     dt_month,

@@ -1,6 +1,8 @@
 with core_transaction as (
     select
         fc.id_transaction,
+        fc.cd_seqlan,
+        fc.dt_transaction,
         fc.cd_customer_id,
         fc.dt_transaction,
         fc.vl_transaction
@@ -11,10 +13,14 @@ with core_transaction as (
 ),
 pix_transaction as (
     select
-        fc.id_transaction
+        fc.id_transaction,
+        fc.cd_seqlan,
+        fc.dt_transaction
     from {{ ref('tb_fact_pix_transaction') }} as fc
     join {{ ref('rel_core_account_pix') }} rp
         on rp.id_transaction = fc.id_transaction
+        and rp.cd_seqlan = fc.cd_seqlan
+        and rp.dt_transaction = fc.dt_transaction
     where rp.is_pix_done = 0
 )
 
