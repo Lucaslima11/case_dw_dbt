@@ -6,7 +6,7 @@ with transactions as (
         sum(fp.vl_transaction) as sum_vl_transaction
     from {{ ref('tb_fact_pix_transaction') }} as fp
     group by
-        1,2,3
+        1,2
 )
 
 select * from transactions
